@@ -44,7 +44,7 @@ class Algorithm:
             host="localhost",
             user="root",
             passwd="",
-            database="reader_books_management"
+            database=""
         )
         return db
 
