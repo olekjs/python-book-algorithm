@@ -1,6 +1,7 @@
 import mysql.connector
 from urllib.request import urlopen
 import json
+from time import gmtime, strftime
 
 class Algorithm:
     def init(self):
@@ -8,7 +9,8 @@ class Algorithm:
         return self.iterate_file(books)
 
     def iterate_file(self, books):
-        for book in books:
+        for index, book in enumerate(books):
+            print("{} {} {}".format("Przetwarzam", index, "książkę"))
             self.check_name_in_api(book)
 
     def check_name_in_api(self, book):
@@ -33,8 +35,9 @@ class Algorithm:
     def create_book_record_in_db(self, data):
         db = self.get_db_connect()
         cursor = db.cursor()
-        sql = "INSERT INTO books (title, author, category, epochs, photo, link_to_txt) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (data['title'], data['authors'][0]['name'], data['kinds'][0]['name'], data['epochs'][0]['name'], data['cover'], data['txt'])
+        now = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        sql = "INSERT INTO books (title, author, category, epochs, photo, link_to_txt, created_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        val = (data['title'], data['authors'][0]['name'], data['kinds'][0]['name'], data['epochs'][0]['name'], data['cover'], data['txt'], now)
         cursor.execute(sql, val)
         db.commit()
 
@@ -44,13 +47,10 @@ class Algorithm:
             host="localhost",
             user="root",
             passwd="",
-            database=""
+            database="reader_books_management"
         )
         return db
 
 
-
-
-
-alg = Algorithm()
-print(alg.init())
+algorithm = Algorithm()
+algorithm.init()
